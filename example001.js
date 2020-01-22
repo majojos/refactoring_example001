@@ -39,20 +39,8 @@ function statement(invoice) {
   return result;
 }
 
-function totalAmount(invoice) {
-  let result = 0;
-  for (let perf of invoice.performances) {
-    result += amountFor(perf);
-  }
-  return result;
-}
-
-function totalVolumeCredits(invoice) {
-  let result = 0;
-  for (let perf of invoice.performances) {
-    result += volumeCreditsFor(perf);
-  }
-  return result;
+function playFor(aPerformance) {
+  return plays[aPerformance.playID];
 }
 
 function usd(aNumber) {
@@ -61,18 +49,6 @@ function usd(aNumber) {
       style: "currency", currency: "USD",
       minimumFractionDigits: 2
     }).format(aNumber / 100);
-}
-
-function playFor(aPerformance) {
-  return plays[aPerformance.playID];
-}
-
-function volumeCreditsFor(aPerformance) {
-  let result = 0;
-  result += Math.max(aPerformance.audience - 30, 0);
-  // add extra credit for every ten comedy attendees
-  if ("comedy" === playFor(aPerformance).type) result += Math.floor(aPerformance.audience / 5);
-  return result;
 }
 
 function amountFor(aPerformance) {
@@ -94,6 +70,30 @@ function amountFor(aPerformance) {
     default:
       throw new Error(`unknown type: ${playFor(aPerformance).type}`);
   }
+  return result;
+}
+
+function totalAmount(invoice) {
+  let result = 0;
+  for (let perf of invoice.performances) {
+    result += amountFor(perf);
+  }
+  return result;
+}
+
+function totalVolumeCredits(invoice) {
+  let result = 0;
+  for (let perf of invoice.performances) {
+    result += volumeCreditsFor(perf);
+  }
+  return result;
+}
+
+function volumeCreditsFor(aPerformance) {
+  let result = 0;
+  result += Math.max(aPerformance.audience - 30, 0);
+  // add extra credit for every ten comedy attendees
+  if ("comedy" === playFor(aPerformance).type) result += Math.floor(aPerformance.audience / 5);
   return result;
 }
 
